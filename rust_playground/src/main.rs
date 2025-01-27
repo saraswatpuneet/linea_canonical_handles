@@ -8,7 +8,7 @@ use ethers::{
 };
 use std::convert::TryFrom;
 use std::sync::Arc;
-
+use unicode_normalization::
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     // Replace with your Infura/Alchemy HTTP URL

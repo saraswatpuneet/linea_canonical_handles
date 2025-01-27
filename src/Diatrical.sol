@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract DiatricalNormalizer {
+contract DiatricalNormalizer1 {
     mapping(uint16 => uint16) public combiningMarks;
     uint256[] public combiningMarksSalt;
     address public owner;

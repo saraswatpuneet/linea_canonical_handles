@@ -8,4 +8,5 @@ ethers = "1.0"  # For Ethereum contract interaction
 unicode-normalization = "0.1"  # For Unicode normalization
 hex = "0.4"  # For encoding/decoding bytes in hexadecimal format
 tokio = { version = "1", features = ["full"] }  # For async runtime
-
+eyre = "0.6"
+serde_json = "1.0.137"

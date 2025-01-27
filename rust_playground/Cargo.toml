@@ -1,0 +1,11 @@
+[package]
+name = "rust_playground"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ethers = "1.0"  # For Ethereum contract interaction
+unicode-normalization = "0.1"  # For Unicode normalization
+hex = "0.4"  # For encoding/decoding bytes in hexadecimal format
+tokio = { version = "1", features = ["full"] }  # For async runtime
+

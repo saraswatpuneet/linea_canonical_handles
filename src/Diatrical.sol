@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract DiatricalNormalizer {
+contract DiatricalNormalizerAppend {
     uint16[] public combiningMarksKV; // Array to store combining marks
     uint256[] public combiningMarksSalt;
     address public owner;
@@ -15,25 +15,26 @@ contract DiatricalNormalizer {
         owner = msg.sender;
     }
 
-    event CombiningMarksInitialized(uint16[] values);
-    event CombiningMarksSaltInitialized(uint256[] salts);
-
     // Initialize combiningMarksKV with values (instead of key-value pairs)
     function initializeCombiningMarks(
         uint16[] memory values
     ) external onlyOwner {
-        combiningMarksKV = values;
-        emit CombiningMarksInitialized(values);
+        // Append the values to the combiningMarksKV array
+        uint256 length = values.length;
+        for (uint256 i = 0; i < length; i++) {
+            combiningMarksKV.push(values[i]);
+        }
     }
 
+    // Initialize combiningMarksSalt with a batch of salts
     function initializeCombiningMarksSalt(
         uint256[] memory salts
     ) external onlyOwner {
+        // Append the salts to the combiningMarksSalt array
         uint256 length = salts.length;
         for (uint256 i = 0; i < length; i++) {
             combiningMarksSalt.push(salts[i]);
         }
-        emit CombiningMarksSaltInitialized(salts);
     }
 
     // Lookup function that mimics the mph_lookup from Rust
@@ -55,6 +56,7 @@ contract DiatricalNormalizer {
         }
     }
 
+    // Simple hash function for indexing into salt and key arrays
     function my_hash(
         uint32 x,
         uint32 s,
@@ -71,10 +73,12 @@ contract DiatricalNormalizer {
         bytes memory outputBytes = new bytes(inputBytes.length); // Allocate initially
         uint256 outputIndex = 0;
 
+        // Loop through each byte in the input string
         for (uint256 i = 0; i < inputBytes.length; i++) {
             uint16 char = uint16(uint8(inputBytes[i]));
             uint16 baseChar = _getBaseCharacter(char);
 
+            // Replace the character with its base character if found
             if (baseChar != 0) {
                 outputBytes[outputIndex] = bytes1(uint8(baseChar));
             } else {
@@ -84,7 +88,7 @@ contract DiatricalNormalizer {
             outputIndex++;
         }
 
-        // Resize array if necessary (for smaller output)
+        // Resize the output array to match the actual content
         assembly {
             mstore(outputBytes, outputIndex)
         }

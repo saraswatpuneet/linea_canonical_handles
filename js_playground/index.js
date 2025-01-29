@@ -37,7 +37,7 @@ const contractABI = [
 ];
 
 // Set the contract address
-const contractAddress = '0xa50a51c09a5c451C52BB714527E1974b686D8e77';
+const contractAddress = '0xfeae27388A65eE984F452f86efFEd42AaBD438FD';
 
 // Create contract instance
 const contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -497,6 +497,15 @@ const COMBINING_SALTS = [
     0x002, 0x000, 0x001, 0x001, 0x000
 ];
 
+// Utility function to chunk the array into batches of 100
+function chunkArray(array, size) {
+    const result = [];
+    for (let i = 0; i < array.length; i += size) {
+        result.push(array.slice(i, i + size));
+    }
+    return result;
+}
+
 // To sign and send a transaction
 async function sendTransaction(data, from) {
     // Estimate gas for the transaction
@@ -517,23 +526,29 @@ async function sendTransaction(data, from) {
     return web3.eth.sendSignedTransaction(signedTx.rawTransaction);
 }
 
-// Call the initializeCombiningMarks function
+// Function to initialize combining marks in batches of 100
 async function initializeCombiningMarks() {
     try {
-        const tx = contract.methods.initializeCombiningMarks(COMBINING_MARKS);
-        const receipt = await sendTransaction(tx, account);
-        console.log('Combining Marks Initialization successful:', receipt);
+        const batches = chunkArray(COMBINING_MARKS, 100);
+        for (const batch of batches) {
+            const tx = contract.methods.initializeCombiningMarks(batch);
+            const receipt = await sendTransaction(tx, account);
+            console.log('Combining Marks Initialization batch successful:', receipt);
+        }
     } catch (error) {
         console.error('Error initializing combining marks:', error);
     }
 }
 
-// Call the initializeCombiningMarksSalt function
+// Function to initialize combining salts in batches of 100
 async function initializeCombiningMarksSalt() {
     try {
-        const tx = contract.methods.initializeCombiningMarksSalt(COMBINING_MARKS_SALT);
-        const receipt = await sendTransaction(tx, account);
-        console.log('Combining Marks Salt Initialization successful:', receipt);
+        const batches = chunkArray(COMBINING_SALTS, 100);
+        for (const batch of batches) {
+            const tx = contract.methods.initializeCombiningMarksSalt(batch);
+            const receipt = await sendTransaction(tx, account);
+            console.log('Combining Marks Salt Initialization batch successful:', receipt);
+        }
     } catch (error) {
         console.error('Error initializing combining marks salt:', error);
     }

@@ -7,7 +7,7 @@ const web3 = new Web3('http://localhost:8545');
 const contractABI = [
     {
         "inputs": [
-            { "internalType": "uint16[]", "name": "values", "type": "uint16[]" }  // Only values now
+            { "internalType": "uint256[]", "name": "values", "type": "uint256[]" }  // Only values now
         ],
         "name": "initializeCombiningMarks",
         "outputs": [],
@@ -37,7 +37,7 @@ const contractABI = [
 ];
 
 // Set the contract address
-const contractAddress = '0xA86EB77c09aE0F2164065aB14094565011b0BfcA';
+const contractAddress = '0x26cfAFd6403Be7bE19eEEFf815a147766F3a1F44';
 
 // Create contract instance
 const contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -533,7 +533,7 @@ async function initializeCombiningMarks() {
         for (const batch of batches) {
             const tx = contract.methods.initializeCombiningMarks(batch);
             const receipt = await sendTransaction(tx, account);
-            console.log('Combining Marks Initialization batch successful:', receipt);
+            console.log('1:', receipt);
         }
     } catch (error) {
         console.error('Error initializing combining marks:', error);
@@ -547,7 +547,7 @@ async function initializeCombiningMarksSalt() {
         for (const batch of batches) {
             const tx = contract.methods.initializeCombiningMarksSalt(batch);
             const receipt = await sendTransaction(tx, account);
-            console.log('Combining Marks Salt Initialization batch successful:', receipt);
+            console.log('2:', receipt);
         }
     } catch (error) {
         console.error('Error initializing combining marks salt:', error);

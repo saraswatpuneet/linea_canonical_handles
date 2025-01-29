@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract DiatricalNormalizerAppend {
-    uint16[] public combiningMarksKV; // Array to store combining marks
+contract DiatricalNormalizerAppend2 {
+    uint16[] public combiningMarksKV; 
     uint256[] public combiningMarksSalt;
     address public owner;
 

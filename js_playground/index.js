@@ -1,14 +1,13 @@
-const Web3 = require('web3');
+import Web3 from 'web3'; // Import Web3 using ES Module syntax
 
 // Connect to Ethereum network (Goerli testnet using Infura)
-const web3 = new Web3('https://goerli.infura.io/v3/YOUR_INFURA_PROJECT_ID');
+const web3 = new Web3('http://localhost:8545');
 
 // Define the contract ABI (Application Binary Interface)
 const contractABI = [
     {
         "inputs": [
-            { "internalType": "uint16[]", "name": "keys", "type": "uint16[]" },
-            { "internalType": "uint16[]", "name": "values", "type": "uint16[]" }
+            { "internalType": "uint16[]", "name": "values", "type": "uint16[]" }  // Only values now
         ],
         "name": "initializeCombiningMarks",
         "outputs": [],
@@ -38,7 +37,7 @@ const contractABI = [
 ];
 
 // Set the contract address
-const contractAddress = '0x338F940F4231662Dd9a689DdC4691450de932Be5';
+const contractAddress = '0xa50a51c09a5c451C52BB714527E1974b686D8e77';
 
 // Create contract instance
 const contract = new web3.eth.Contract(contractABI, contractAddress);
@@ -72,7 +71,7 @@ async function sendTransaction(data, from) {
 // Call the initializeCombiningMarks function
 async function initializeCombiningMarks() {
     try {
-        const tx = contract.methods.initializeCombiningMarks([1, 2], [10, 20]);
+        const tx = contract.methods.initializeCombiningMarks([10, 20, 30]);  // Only values (no keys)
         const receipt = await sendTransaction(tx, account);
         console.log('Combining Marks Initialization successful:', receipt);
     } catch (error) {

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract DiatricalNormalizer1 {
-    mapping(uint16 => uint16) public combiningMarks;
+contract DiatricalNormalizer {
+    uint16[] public combiningMarksKV; // Array to store combining marks
     uint256[] public combiningMarksSalt;
     address public owner;
 
@@ -15,18 +15,20 @@ contract DiatricalNormalizer1 {
         owner = msg.sender;
     }
 
-    event CombiningMarksInitialized(uint16[] keys, uint16[] values);
+    event CombiningMarksInitialized(uint16[] values);
     event CombiningMarksSaltInitialized(uint256[] salts);
 
-    function initializeCombiningMarks(uint16[] memory keys, uint16[] memory values) external onlyOwner {
-        require(keys.length == values.length, "Keys and values must have the same length");
-        for (uint256 i = 0; i < keys.length; i++) {
-            combiningMarks[keys[i]] = values[i];
-        }
-        emit CombiningMarksInitialized(keys, values);
+    // Initialize combiningMarksKV with values (instead of key-value pairs)
+    function initializeCombiningMarks(
+        uint16[] memory values
+    ) external onlyOwner {
+        combiningMarksKV = values;
+        emit CombiningMarksInitialized(values);
     }
 
-    function initializeCombiningMarksSalt(uint256[] memory salts) external onlyOwner {
+    function initializeCombiningMarksSalt(
+        uint256[] memory salts
+    ) external onlyOwner {
         uint256 length = salts.length;
         for (uint256 i = 0; i < length; i++) {
             combiningMarksSalt.push(salts[i]);
@@ -34,11 +36,12 @@ contract DiatricalNormalizer1 {
         emit CombiningMarksSaltInitialized(salts);
     }
 
+    // Lookup function that mimics the mph_lookup from Rust
     function mph_lookup(
         uint32 x,
         uint16[] memory salt,
-        uint32[] memory keys,
-        uint16[] memory values,
+        uint16[] memory keys, // This is now an array of indices for the lookup table
+        uint16[] memory values, // This is the actual array of normalized values
         uint16 default_value
     ) internal pure returns (uint16) {
         uint256 index = my_hash(x, 0, salt.length);
@@ -60,7 +63,10 @@ contract DiatricalNormalizer1 {
         return uint256(keccak256(abi.encodePacked(x, s))) % salt_len;
     }
 
-    function stripDiacritics(string memory inputStr) public view returns (string memory) {
+    // Function to strip diacritics from a string using the combiningMarksKV array
+    function stripDiacritics(
+        string memory inputStr
+    ) public view returns (string memory) {
         bytes memory inputBytes = bytes(inputStr);
         bytes memory outputBytes = new bytes(inputBytes.length); // Allocate initially
         uint256 outputIndex = 0;
@@ -86,7 +92,11 @@ contract DiatricalNormalizer1 {
         return string(outputBytes);
     }
 
+    // Look up a character’s base form in the combiningMarksKV array
     function _getBaseCharacter(uint16 char) internal view returns (uint16) {
-        return combiningMarks[char];
+        if (char < combiningMarksKV.length) {
+            return combiningMarksKV[char]; // Use the index to get the corresponding normalized value
+        }
+        return 0; // Return 0 if the character index is out of bounds
     }
 }
